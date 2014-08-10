@@ -20,8 +20,8 @@ function getShader(gl, id) {
     return null;
   }
 
-  console.log(id+': ');
-  console.log(shaderScript);
+  //XXX console.log(id+': ');
+  //XXX console.log(shaderScript);
 
   var str = "";
   var k = shaderScript.firstChild;
@@ -31,7 +31,7 @@ function getShader(gl, id) {
     }
     k = k.nextSibling;
   }
-  console.log(str)
+  //XXX console.log(str)
 
   var shader;
   if (shaderScript.type == "x-shader/x-fragment") {
@@ -107,10 +107,10 @@ function initBuffers() {
   squareVertexPositionBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
   vertices = [
-    1.0,  1.0,  0.0,
-    -1.0,  1.0,  0.0,
-    1.0, -1.0,  0.0,
-    -1.0, -1.0,  0.0
+    1.0,  1.0,  -3.0,
+    -1.0,  1.0,  -3.0,
+    1.0, -1.0,  -2.0,
+    -1.0, -1.0,  -1.0
   ];
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
   squareVertexPositionBuffer.itemSize = 3;
@@ -140,7 +140,56 @@ function drawScene() {
   gl.drawArrays(gl.TRIANGLE_STRIP, 0, squareVertexPositionBuffer.numItems);
 }
 
+function Variable(txt) {
+  this.text = txt;
+}
 
+function fibTest() {
+  var numIter = 10;
+  var ls = {
+    alphabet: { A: new Variable('A'),
+                B: new Variable('B')
+    },
+    constants: {},
+    start: 'A',
+    rules: { A: ['AB', 1.0],
+             B: ['A',  1.0]
+    }
+  };
+  //XXX console.log(ls);
+  var outputDiv = document.getElementById('canvas-padding');
+  $('div#canvas-padding').append(ls.start);
+
+  var buffer = [ls.start];
+  for (var i = 0; i < numIter; ++i) {
+    var newBuffer = [];
+    buffer.forEach(function (x) {
+      //XXX console.log('processing \''+x+'\'');
+      var match = '';
+      var begin = 0;
+      // try increasing length substrings until one matches
+      for (var j = 1; j <= x.length; ++j) {
+        //XXX console.log(x.substring(begin, j));
+        var substr = x.substring(begin, j);
+        var token = ls.alphabet[substr]
+        if (token && ls.rules[token.text]) {
+          //XXX console.log('substring match \''+substr+'\'');
+          var product = ls.rules[token.text][0];
+          newBuffer.push(product);
+          // update the new beginning of substring
+          begin = j;
+        }
+      }
+    });
+    //outputDiv.innerHTML = outputDiv.innerHTML + '\n' + newBuffer.join(' ');
+    $('div#canvas-padding').append('<br/>' + newBuffer.join(' '));
+    buffer = newBuffer;
+  }
+}
+
+function runLSystemTest() {
+  fibTest();
+}
 
 function webGLStart() {
   var canvas = document.getElementById("lesson01-canvas");
@@ -155,10 +204,20 @@ function webGLStart() {
 }
 
 function start() {
-  // load shader src and continue with webgl init function
   var editor = ace.edit("editor");
   editor.setTheme("ace/theme/monokai");
   editor.getSession().setMode("ace/mode/javascript");
+
+  var generatorEditor = ace.edit("generator-editor");
+  generatorEditor.setTheme("ace/theme/monokai");
+  generatorEditor.getSession().setMode("ace/mode/javascript");
+  generatorEditor.getSession().on("change", function() {
+      runLSystemTest();
+    }
+  );
+
   webGLStart();
+
+  runLSystemTest();
 }
 

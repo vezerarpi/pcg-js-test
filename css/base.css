@@ -1,0 +1,48 @@
+style="border: solid;" width="500" height="500"
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+#header {
+    font-size: 16px;
+    position: absolute;
+    top: 0px;
+    bottom: 8px;
+    right: 0;
+    left: 0;
+    background-color: #00ff00;
+
+}
+
+#editor { 
+    font-size: 12px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 50%;
+    left: 0;
+
+    border-style: solid;
+    border-width: 4px 0px 0px 0px;
+    border-color: #000000;
+}
+
+#viewer { 
+    position: absolute;
+    border-style: solid;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    right: 0;
+}
+
+#lesson01-canvas {
+    width:100%;
+    //background-color: black;
+}
+
+#canvas-padding {
+    margin-bottom: 50%
+}
